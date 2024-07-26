@@ -32,8 +32,6 @@ export const SearchTags = () => {
             });
     }, [name]);
 
-    console.log(filteredPosts);
-
     return (
         <Grid container spacing={4}>
             <Grid xs={8} item>

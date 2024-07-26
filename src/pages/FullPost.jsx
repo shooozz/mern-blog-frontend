@@ -1,73 +1,107 @@
 import React from "react";
 
 import { Post } from "../components/Post";
-import { Index } from "../components/AddComment";
+import AddComment from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useParams } from "react-router-dom";
 import axios from "../axios";
 import ReactMarkdown from "react-markdown";
 
 export const FullPost = () => {
-    const [data, setData] = React.useState();
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [user, setUser] = React.useState({});
+    const [comment, setComment] = React.useState("");
+    const [dataPost, setDataPost] = React.useState();
+    const [dataComment, setDataComment] = React.useState();
+    const [isLoadingPost, setIsLoadingPost] = React.useState(true);
+    const [isLoadingComment, setIsLoadingComment] = React.useState(true);
     const { id } = useParams();
 
     React.useEffect(() => {
         axios
             .get(`/posts/${id}`)
             .then((res) => {
-                setData(res.data);
-                setIsLoading(false);
+                setDataPost(res.data);
+                setIsLoadingPost(false);
             })
             .catch((err) => {
                 console.log(err);
                 alert("Error to get articles");
             });
+        axios
+            .get(`/comments/post/${id}`)
+            .then((res) => {
+                setDataComment(res.data);
+                setIsLoadingComment(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                alert("Error to get comments");
+            });
     }, [id]);
 
-    if (isLoading) {
-        return <Post isLoading={isLoading} isFullPost />;
+    const addComment = async () => {
+        try {
+            const fields = {
+                text: comment,
+                user: user._id,
+                postId: id,
+            };
+            await axios.post(`/comments`, fields);
+            setComment("");
+            window.location.reload();
+        } catch (err) {
+            // console.log(err);
+            alert("Error to create comment");
+        }
+    };
+
+    React.useEffect(() => {
+        axios.get("/auth/me").then((res) => {
+            setUser(res.data);
+        });
+    }, []);
+
+    if (isLoadingPost && isLoadingComment) {
+        return <Post isLoading={isLoadingPost} isFullPost />;
     }
 
     return (
         <>
-            <Post
-                id={data._id}
-                title={data.title}
-                imageUrl={
-                    data.imageUrl ? `http://localhost:4444${data.imageUrl}` : ""
-                }
-                user={data.user}
-                createdAt={data.createdAt}
-                viewsCount={data.viewsCount}
-                commentsCount={3}
-                tags={data.tags}
-                isFullPost
-            >
-                <ReactMarkdown children={data.text} />
-            </Post>
+            {dataPost && (
+                <Post
+                    id={dataPost._id}
+                    title={dataPost.title}
+                    imageUrl={
+                        dataPost.imageUrl
+                            ? `http://localhost:4444${dataPost.imageUrl}`
+                            : ""
+                    }
+                    user={dataPost.user}
+                    createdAt={dataPost.createdAt}
+                    viewsCount={dataPost.viewsCount}
+                    commentsCount={dataComment.length}
+                    tags={dataPost.tags}
+                    isFullPost
+                >
+                    <ReactMarkdown children={dataPost.text} />
+                </Post>
+            )}
             <CommentsBlock
-                items={[
-                    {
-                        user: {
-                            fullName: "Вася Пупкин",
-                            avatarUrl:
-                                "https://mui.com/static/images/avatar/1.jpg",
-                        },
-                        text: "Это тестовый комментарий 555555",
+                items={dataComment.map((comment) => ({
+                    user: {
+                        fullName: comment.user.fullName,
+                        avatarUrl: comment.user.avatarUrl,
                     },
-                    {
-                        user: {
-                            fullName: "Иван Иванов",
-                            avatarUrl:
-                                "https://mui.com/static/images/avatar/2.jpg",
-                        },
-                        text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",
-                    },
-                ]}
-                isLoading={false}
+                    text: comment.text,
+                }))}
+                isLoading={isLoadingComment}
             >
-                <Index />
+                <AddComment
+                    addComment={addComment}
+                    comment={comment}
+                    setComment={setComment}
+                    user={user}
+                />
             </CommentsBlock>
         </>
     );

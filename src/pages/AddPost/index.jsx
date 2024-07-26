@@ -60,7 +60,6 @@ export const AddPost = () => {
                 ? await axios.patch(`/posts/${id}`, fields)
                 : await axios.post("/posts", fields);
             const _id = isEditing ? id : data._id;
-            console.log(data);
 
             navigate(`/posts/${_id}`);
         } catch (err) {

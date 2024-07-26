@@ -7,11 +7,15 @@ import Grid from "@mui/material/Grid";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
+import { fetchComments } from "../redux/slices/comments";
 
 export const Home = () => {
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.auth.data);
     const { posts, tags } = useSelector((state) => state.posts);
+    const { comments } = useSelector((state) => state.comments);
+
+    console.log(posts);
 
     const [tabValue, setTabValue] = React.useState(0);
 
@@ -22,6 +26,7 @@ export const Home = () => {
         const sortBy = tabValue === 0 ? "createdAt" : "viewsCount";
         dispatch(fetchPosts({ sortBy }));
         dispatch(fetchTags());
+        dispatch(fetchComments());
     }, [dispatch, tabValue]);
     const handleChangeTab = (event, newValue) => {
         setTabValue(newValue);
@@ -57,7 +62,7 @@ export const Home = () => {
                                     user={obj.user}
                                     createdAt={obj.createdAt}
                                     viewsCount={obj.viewsCount}
-                                    commentsCount={obj.commentsCount}
+                                    commentsCount={obj.comments.length}
                                     tags={obj.tags}
                                     isLoading={false}
                                     isEditable={userData?._id === obj.user._id}
@@ -67,19 +72,7 @@ export const Home = () => {
                 </Grid>
                 <Grid xs={4} item>
                     <TagsBlock items={tags.items} isLoading={isTagsLoading} />
-                    <CommentsBlock
-                        items={[
-                            {
-                                user: {
-                                    fullName: "Вася Пупкин",
-                                    avatarUrl:
-                                        "https://mui.com/static/images/avatar/1.jpg",
-                                },
-                                text: "Это тестовый комментарий",
-                            },
-                        ]}
-                        isLoading={false}
-                    />
+                    <CommentsBlock items={comments.items} isLoading={false} />
                 </Grid>
             </Grid>
         </>
