@@ -1,22 +1,21 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts, fetchTags } from "../redux/slices/posts";
+import { fetchPosts } from "../redux/slices/posts";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
 import { Post } from "../components/Post";
-import { TagsBlock } from "../components/TagsBlock";
+import { TagsBlock } from "../components/TagsSideInfo";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { fetchComments } from "../redux/slices/comments";
+import { fetchTags } from "../redux/slices/tags";
 
 export const Home = () => {
     const dispatch = useDispatch();
     const userData = useSelector((state) => state.auth.data);
-    const { posts, tags } = useSelector((state) => state.posts);
+    const { posts } = useSelector((state) => state.posts);
+    const { tags } = useSelector((state) => state.tags);
     const { comments } = useSelector((state) => state.comments);
-
-    console.log(posts);
-
     const [tabValue, setTabValue] = React.useState(0);
 
     const isPostsLoading = posts.status === "loading";

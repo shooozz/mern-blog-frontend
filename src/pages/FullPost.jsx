@@ -13,7 +13,6 @@ export const FullPost = () => {
     const [dataPost, setDataPost] = React.useState();
     const [dataComment, setDataComment] = React.useState();
     const [isLoadingPost, setIsLoadingPost] = React.useState(true);
-    const [isLoadingComment, setIsLoadingComment] = React.useState(true);
     const { id } = useParams();
 
     React.useEffect(() => {
@@ -21,21 +20,12 @@ export const FullPost = () => {
             .get(`/posts/${id}`)
             .then((res) => {
                 setDataPost(res.data);
+                setDataComment(res.data.comments);
                 setIsLoadingPost(false);
             })
             .catch((err) => {
                 console.log(err);
                 alert("Error to get articles");
-            });
-        axios
-            .get(`/comments/post/${id}`)
-            .then((res) => {
-                setDataComment(res.data);
-                setIsLoadingComment(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                alert("Error to get comments");
             });
     }, [id]);
 
@@ -50,7 +40,7 @@ export const FullPost = () => {
             setComment("");
             window.location.reload();
         } catch (err) {
-            // console.log(err);
+            console.log(err);
             alert("Error to create comment");
         }
     };
@@ -61,7 +51,7 @@ export const FullPost = () => {
         });
     }, []);
 
-    if (isLoadingPost && isLoadingComment) {
+    if (isLoadingPost) {
         return <Post isLoading={isLoadingPost} isFullPost />;
     }
 
@@ -94,7 +84,7 @@ export const FullPost = () => {
                     },
                     text: comment.text,
                 }))}
-                isLoading={isLoadingComment}
+                isLoading={isLoadingPost}
             >
                 <AddComment
                     addComment={addComment}
