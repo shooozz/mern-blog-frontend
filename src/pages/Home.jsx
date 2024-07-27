@@ -1,25 +1,31 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPosts } from "../redux/slices/posts";
+import { useSelector } from "react-redux";
+import { fetchPosts } from "../redux/posts/slice";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Grid from "@mui/material/Grid";
 import { Post } from "../components/Post";
 import { TagsBlock } from "../components/TagsSideInfo";
 import { CommentsBlock } from "../components/CommentsBlock";
-import { fetchComments } from "../redux/slices/comments";
-import { fetchTags } from "../redux/slices/tags";
+import { fetchComments } from "../redux/comments/slice";
+import { fetchTags } from "../redux/tags/slice";
+import { useAppDispatch } from "../redux/store";
+import { selectPosts, selectPostsStatus } from "../redux/posts/selector";
+import { selectTags, selectTagsStatus } from "../redux/tags/selector";
+import { selectComments } from "../redux/comments/selector";
 
 export const Home = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const userData = useSelector((state) => state.auth.data);
-    const { posts } = useSelector((state) => state.posts);
-    const { tags } = useSelector((state) => state.tags);
-    const { comments } = useSelector((state) => state.comments);
+    const posts = useSelector(selectPosts);
+    const postsStatus = useSelector(selectPostsStatus);
+    const tags = useSelector(selectTags);
+    const tagsStatus = useSelector(selectTagsStatus);
+    const comments = useSelector(selectComments);
     const [tabValue, setTabValue] = React.useState(0);
 
-    const isPostsLoading = posts.status === "loading";
-    const isTagsLoading = tags.status === "loading";
+    const isPostsLoading = postsStatus === "loading";
+    const isTagsLoading = tagsStatus === "loading";
 
     React.useEffect(() => {
         const sortBy = tabValue === 0 ? "createdAt" : "viewsCount";
@@ -27,6 +33,7 @@ export const Home = () => {
         dispatch(fetchTags());
         dispatch(fetchComments());
     }, [dispatch, tabValue]);
+
     const handleChangeTab = (event, newValue) => {
         setTabValue(newValue);
     };
@@ -44,7 +51,7 @@ export const Home = () => {
             </Tabs>
             <Grid container spacing={4}>
                 <Grid xs={8} item>
-                    {(isPostsLoading ? [...Array(5)] : posts.items).map(
+                    {(isPostsLoading ? [...Array(5)] : posts).map(
                         (obj, index) =>
                             isPostsLoading ? (
                                 <Post key={index} isLoading={true} />
@@ -70,8 +77,8 @@ export const Home = () => {
                     )}
                 </Grid>
                 <Grid xs={4} item>
-                    <TagsBlock items={tags.items} isLoading={isTagsLoading} />
-                    <CommentsBlock items={comments.items} isLoading={false} />
+                    <TagsBlock items={tags} isLoading={isTagsLoading} />
+                    <CommentsBlock items={comments} isLoading={false} />
                 </Grid>
             </Grid>
         </>

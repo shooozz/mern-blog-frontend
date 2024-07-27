@@ -1,7 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../axios";
+import { FetchPostsParams, Post, PostsState } from "./types";
+import { Status } from "../types";
 
-export const fetchPosts = createAsyncThunk(
+export const fetchPosts = createAsyncThunk<Post[], FetchPostsParams>(
     "posts/fetchPosts",
     async ({ sortBy = "createdAt", sortOrder = "desc" } = {}) => {
         const { data } = await axios.get(
@@ -11,18 +13,16 @@ export const fetchPosts = createAsyncThunk(
     }
 );
 
-export const fetchRemovePost = createAsyncThunk(
+export const fetchRemovePost = createAsyncThunk<void, string>(
     "posts/fetchRemovePost",
     async (id) => {
         await axios.delete(`/posts/${id}`);
     }
 );
 
-const initialState = {
-    posts: {
-        items: [],
-        status: "loading",
-    },
+const initialState: PostsState = {
+    items: [],
+    status: Status.LOADING,
 };
 
 const postsSlice = createSlice({
@@ -33,24 +33,24 @@ const postsSlice = createSlice({
         builder
             // Получение статей
             .addCase(fetchPosts.pending, (state) => {
-                state.posts.status = "loading";
+                state.status = Status.LOADING;
             })
             .addCase(fetchPosts.fulfilled, (state, action) => {
-                state.posts.items = action.payload;
-                state.posts.status = "loaded";
+                state.items = action.payload;
+                state.status = Status.SUCCESS;
             })
             .addCase(fetchPosts.rejected, (state) => {
-                state.posts.items = [];
-                state.posts.status = "error";
+                state.items = [];
+                state.status = Status.ERROR;
             })
             // Удаление статьи
             .addCase(fetchRemovePost.pending, (state, action) => {
-                state.posts.items = state.posts.items.filter(
+                state.items = state.items.filter(
                     (obj) => obj._id !== action.meta.arg
                 );
             })
             .addCase(fetchRemovePost.rejected, (state) => {
-                state.posts.status = "error";
+                state.status = Status.ERROR;
             });
     },
 });

@@ -6,13 +6,15 @@ import Button from "@mui/material/Button";
 
 import styles from "./Login.module.scss";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
+import { useSelector } from "react-redux";
+import { fetchAuth } from "../../redux/auth/slice";
+import { selectIsAuth } from "../../redux/auth/selector";
 import { Navigate } from "react-router-dom";
+import { useAppDispatch } from "../../redux/store";
 
 export const Login = () => {
     const isAuth = useSelector(selectIsAuth);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const {
         register,
         handleSubmit,

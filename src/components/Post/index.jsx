@@ -10,8 +10,8 @@ import CommentIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import styles from "./Post.module.scss";
 import { UserInfo } from "../UserInfo";
 import { PostSkeleton } from "./Skeleton";
-import { useDispatch } from "react-redux";
-import { fetchRemovePost } from "../../redux/slices/posts";
+import { fetchRemovePost } from "../../redux/posts/slice";
+import { useAppDispatch } from "../../redux/store";
 
 export const Post = ({
     _id,
@@ -27,7 +27,7 @@ export const Post = ({
     isLoading,
     isEditable,
 }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     if (isLoading) {
         return <PostSkeleton />;
     }

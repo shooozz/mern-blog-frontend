@@ -7,10 +7,8 @@ export const fetchTags = createAsyncThunk("posts/fetchTags", async () => {
 });
 
 const initialState = {
-    tags: {
-        items: [],
-        status: "loading",
-    },
+    items: [],
+    status: "loading",
 };
 
 const tagsSlice = createSlice({
@@ -21,15 +19,15 @@ const tagsSlice = createSlice({
         builder
             // Получение тегов
             .addCase(fetchTags.pending, (state) => {
-                state.tags.status = "loading";
+                state.status = "loading";
             })
             .addCase(fetchTags.fulfilled, (state, action) => {
-                state.tags.items = action.payload;
-                state.tags.status = "loaded";
+                state.items = action.payload;
+                state.status = "loaded";
             })
             .addCase(fetchTags.rejected, (state) => {
-                state.tags.items = [];
-                state.tags.status = "error";
+                state.items = [];
+                state.status = "error";
             });
     },
 });
