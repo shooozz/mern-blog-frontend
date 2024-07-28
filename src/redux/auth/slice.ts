@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "../../axios";
+import { Status } from "../types";
+import { AuthSliceState } from "./types";
 
 export const fetchAuth = createAsyncThunk(
     "auth/fetchUserData",
@@ -25,9 +27,9 @@ export const fetchRegister = createAsyncThunk(
     }
 );
 
-const initialState = {
+const initialState: AuthSliceState = {
     data: null,
-    status: "loading",
+    status: Status.LOADING,
 };
 
 const authSlice = createSlice({
@@ -41,45 +43,43 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchAuth.pending, (state) => {
-                state.status = "loading";
+                state.status = Status.LOADING;
                 state.data = null;
             })
             .addCase(fetchAuth.fulfilled, (state, action) => {
                 state.data = action.payload;
-                state.status = "loaded";
+                state.status = Status.SUCCESS;
             })
             .addCase(fetchAuth.rejected, (state) => {
                 state.data = null;
-                state.status = "error";
+                state.status = Status.ERROR;
             })
             .addCase(fetchAuthMe.pending, (state) => {
-                state.status = "loading";
+                state.status = Status.LOADING;
                 state.data = null;
             })
             .addCase(fetchAuthMe.fulfilled, (state, action) => {
                 state.data = action.payload;
-                state.status = "loaded";
+                state.status = Status.SUCCESS;
             })
             .addCase(fetchAuthMe.rejected, (state) => {
                 state.data = null;
-                state.status = "error";
+                state.status = Status.ERROR;
             })
             .addCase(fetchRegister.pending, (state) => {
-                state.status = "loading";
+                state.status = Status.LOADING;
                 state.data = null;
             })
             .addCase(fetchRegister.fulfilled, (state, action) => {
                 state.data = action.payload;
-                state.status = "loaded";
+                state.status = Status.SUCCESS;
             })
             .addCase(fetchRegister.rejected, (state) => {
                 state.data = null;
-                state.status = "error";
+                state.status = Status.ERROR;
             });
     },
 });
-
-export const selectIsAuth = (state) => Boolean(state.auth.data);
 
 export const authReducer = authSlice.reducer;
 

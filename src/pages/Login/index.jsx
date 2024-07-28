@@ -6,19 +6,22 @@ import Button from "@mui/material/Button";
 
 import styles from "./Login.module.scss";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchAuth, selectIsAuth } from "../../redux/slices/auth";
+import { useSelector } from "react-redux";
+import { fetchAuth } from "../../redux/auth/slice";
+import { selectIsAuth } from "../../redux/auth/selector";
 import { Navigate } from "react-router-dom";
+import { useAppDispatch } from "../../redux/store";
 
 export const Login = () => {
     const isAuth = useSelector(selectIsAuth);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const {
         register,
         handleSubmit,
         setError,
         formState: { errors, isValid },
     } = useForm({
+        mode: "onChange",
         defaultValues: {
             email: "",
             password: "",
@@ -39,6 +42,7 @@ export const Login = () => {
     if (isAuth) {
         return <Navigate to="/" />;
     }
+    console.log(isValid);
 
     return (
         <Paper classes={{ root: styles.root }}>
@@ -52,7 +56,13 @@ export const Login = () => {
                     type="email"
                     error={Boolean(errors.email?.message)}
                     helperText={errors.email?.message}
-                    {...register("email", { required: "Write email" })}
+                    {...register("email", {
+                        required: "Write email",
+                        pattern: {
+                            value: /^\S+@\S+$/i,
+                            message: "Write correct email",
+                        },
+                    })}
                     fullWidth
                 />
                 <TextField
@@ -61,7 +71,13 @@ export const Login = () => {
                     fullWidth
                     error={Boolean(errors.password?.message)}
                     helperText={errors.password?.message}
-                    {...register("password", { required: "Write password" })}
+                    {...register("password", {
+                        required: "Write password",
+                        minLength: {
+                            value: 5,
+                            message: "Password must be contains min 5 symbols",
+                        },
+                    })}
                 />
                 <Button
                     disabled={!isValid}

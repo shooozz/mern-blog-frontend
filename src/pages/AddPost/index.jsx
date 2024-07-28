@@ -7,7 +7,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
 import { useSelector } from "react-redux";
-import { selectIsAuth } from "../../redux/slices/auth";
+import { selectIsAuth } from "../../redux/auth/selector";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "../../axios";
 
