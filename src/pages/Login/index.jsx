@@ -21,6 +21,7 @@ export const Login = () => {
         setError,
         formState: { errors, isValid },
     } = useForm({
+        mode: "onChange",
         defaultValues: {
             email: "",
             password: "",
@@ -41,6 +42,7 @@ export const Login = () => {
     if (isAuth) {
         return <Navigate to="/" />;
     }
+    console.log(isValid);
 
     return (
         <Paper classes={{ root: styles.root }}>
@@ -54,7 +56,13 @@ export const Login = () => {
                     type="email"
                     error={Boolean(errors.email?.message)}
                     helperText={errors.email?.message}
-                    {...register("email", { required: "Write email" })}
+                    {...register("email", {
+                        required: "Write email",
+                        pattern: {
+                            value: /^\S+@\S+$/i,
+                            message: "Write correct email",
+                        },
+                    })}
                     fullWidth
                 />
                 <TextField
@@ -63,7 +71,13 @@ export const Login = () => {
                     fullWidth
                     error={Boolean(errors.password?.message)}
                     helperText={errors.password?.message}
-                    {...register("password", { required: "Write password" })}
+                    {...register("password", {
+                        required: "Write password",
+                        minLength: {
+                            value: 5,
+                            message: "Password must be contains min 5 symbols",
+                        },
+                    })}
                 />
                 <Button
                     disabled={!isValid}
