@@ -17,7 +17,6 @@ import { selectComments } from "../redux/comments/selector";
 import { format } from "date-fns";
 import { useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import { margin } from "@mui/system";
 
 export const Home = () => {
     const theme = useTheme();
