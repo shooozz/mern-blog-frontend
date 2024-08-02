@@ -2,22 +2,26 @@ import { Grid } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Post } from "../../components";
-// import { fetchPosts } from "../../redux/slices/posts";
+import { Post, TagsBlock } from "../../components";
 import axios from "../../axios";
 
+import { format } from "date-fns";
+import { selectTags, selectTagsStatus } from "../../redux/tags/selector";
+import { useAppDispatch } from "../../redux/store";
+import { fetchTags } from "../../redux/tags/slice";
+
 export const SearchTags = () => {
-    // const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const { name } = useParams();
-    const { posts } = useSelector((state) => state.posts);
     const userData = useSelector((state) => state.auth.data);
-    const isPostsLoading = posts.status === "loading";
     const [filteredPosts, setFilteredPosts] = React.useState();
     const [isLoading, setIsLoading] = React.useState(true);
+    const tags = useSelector(selectTags);
+    const tagsStatus = useSelector(selectTagsStatus);
 
-    // const filteredPosts = posts.items.filter((obj, index) => {
-    //     return obj.tags.includes(name) ? obj : "";
-    // });
+    console.log(tags, tagsStatus);
+
+    const isTagsLoading = tagsStatus === "loading";
 
     React.useEffect(() => {
         axios
@@ -30,7 +34,11 @@ export const SearchTags = () => {
                 console.log(err);
                 alert("Error to get articles");
             });
-    }, [name]);
+    }, [name, tags]);
+
+    React.useEffect(() => {
+        dispatch(fetchTags());
+    }, [dispatch]);
 
     return (
         <Grid container spacing={4}>
@@ -49,7 +57,10 @@ export const SearchTags = () => {
                                     : ""
                             }
                             user={obj.user}
-                            createdAt={obj.createdAt}
+                            createdAt={format(
+                                new Date(obj.createdAt),
+                                "dd MMM yyyy HH:mm:ss"
+                            )}
                             viewsCount={obj.viewsCount}
                             commentsCount={obj.commentsCount}
                             tags={obj.tags}
@@ -58,6 +69,10 @@ export const SearchTags = () => {
                         />
                     )
                 )}
+            </Grid>
+
+            <Grid xs={4} item>
+                <TagsBlock items={tags} isLoading={isTagsLoading} />
             </Grid>
         </Grid>
     );

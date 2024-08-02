@@ -7,7 +7,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
 import { useSelector } from "react-redux";
-import { selectIsAuth } from "../../redux/slices/auth";
+import { selectIsAuth } from "../../redux/auth/selector";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "../../axios";
 
@@ -49,10 +49,15 @@ export const AddPost = () => {
         try {
             setIsLoading(true);
 
+            const filteredTags = tags
+                .split(",")
+                .map((tag) => tag.trim())
+                .filter((tag) => tag.length >= 2 && tag !== "");
+
             const fields = {
                 title,
                 imageUrl,
-                tags,
+                tags: filteredTags,
                 text,
             };
 
@@ -148,8 +153,9 @@ export const AddPost = () => {
             <TextField
                 classes={{ root: styles.tags }}
                 variant="standard"
-                placeholder="Тэги"
+                placeholder={`Укажите теги через запятые "тег1,тег2,тег3..."`}
                 value={tags}
+                label={`Теги`}
                 onChange={(e) => setTags(e.target.value)}
                 fullWidth
             />

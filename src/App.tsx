@@ -4,16 +4,16 @@ import Container from "@mui/material/Container";
 
 import { Header } from "./components";
 import { Home, FullPost, Registration, AddPost, Login } from "./pages";
-import { useDispatch } from "react-redux";
-import { fetchAuthMe } from "./redux/slices/auth";
+import { fetchAuthMe } from "./redux/auth/slice";
 import { SearchTags } from "./pages/SearchTags";
+import { useAppDispatch } from "./redux/store";
 
 function App() {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     React.useEffect(() => {
         dispatch(fetchAuthMe());
-    }, []);
+    });
 
     return (
         <>
