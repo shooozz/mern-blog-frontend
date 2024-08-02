@@ -70,7 +70,9 @@ export const FullPost = () => {
                 id={post._id}
                 title={post.title}
                 imageUrl={
-                    post.imageUrl ? `http://localhost:4444${post.imageUrl}` : ""
+                    post.imageUrl
+                        ? `https://backend-blog-gules.vercel.app/${post.imageUrl}`
+                        : ""
                 }
                 user={post.user}
                 createdAt={format(
