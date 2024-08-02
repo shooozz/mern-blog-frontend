@@ -21,5 +21,6 @@ export interface Post {
 
 export interface PostsState {
     items: Post[];
+    currentPost: Post | null;
     status: "loading" | "loaded" | "error";
 }

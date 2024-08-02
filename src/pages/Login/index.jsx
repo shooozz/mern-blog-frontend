@@ -42,7 +42,6 @@ export const Login = () => {
     if (isAuth) {
         return <Navigate to="/" />;
     }
-    console.log(isValid);
 
     return (
         <Paper classes={{ root: styles.root }}>

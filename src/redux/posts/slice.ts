@@ -13,6 +13,14 @@ export const fetchPosts = createAsyncThunk<Post[], FetchPostsParams>(
     }
 );
 
+export const fetchPostById = createAsyncThunk<Post, FetchPostsParams>(
+    "posts/fetchPostById",
+    async (postId) => {
+        const { data } = await axios.get(`/posts/${postId}`);
+        return data;
+    }
+);
+
 export const fetchRemovePost = createAsyncThunk<void, string>(
     "posts/fetchRemovePost",
     async (id) => {
@@ -22,6 +30,7 @@ export const fetchRemovePost = createAsyncThunk<void, string>(
 
 const initialState: PostsState = {
     items: [],
+    currentPost: null,
     status: Status.LOADING,
 };
 
@@ -41,6 +50,18 @@ const postsSlice = createSlice({
             })
             .addCase(fetchPosts.rejected, (state) => {
                 state.items = [];
+                state.status = Status.ERROR;
+            })
+            // Получение одной статьи
+            .addCase(fetchPostById.pending, (state) => {
+                state.status = Status.LOADING;
+            })
+            .addCase(fetchPostById.fulfilled, (state, action) => {
+                state.currentPost = action.payload;
+                state.status = Status.SUCCESS;
+            })
+            .addCase(fetchPostById.rejected, (state) => {
+                state.currentPost = null;
                 state.status = Status.ERROR;
             })
             // Удаление статьи
