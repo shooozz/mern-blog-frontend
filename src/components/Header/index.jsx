@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
+import EditIcon from "@mui/icons-material/Edit";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 import styles from "./Header.module.scss";
 import Container from "@mui/material/Container";
@@ -12,6 +14,7 @@ import { useAppDispatch } from "../../redux/store";
 export const Header = () => {
     const isAuth = useSelector(selectIsAuth);
     const dispatch = useAppDispatch();
+    const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 600);
 
     const onClickLogout = () => {
         if (window.confirm("Are you sure want to logout?")) {
@@ -19,20 +22,35 @@ export const Header = () => {
             window.localStorage.removeItem("token");
         }
     };
+    React.useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 600);
+        };
+
+        window.addEventListener("resize", handleResize);
+
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, []);
 
     return (
         <div className={styles.root}>
             <Container maxWidth="lg">
                 <div className={styles.inner}>
                     <a className={styles.logo} href="/">
-                        <div>PUSTOY BLOG</div>
+                        <div>{isMobile ? "PB" : "Pustoy Blog"}</div>
                     </a>
                     <div className={styles.buttons}>
                         {isAuth ? (
                             <>
                                 <Link to="/add-post">
                                     <Button variant="contained">
-                                        Написать статью
+                                        {isMobile ? (
+                                            <EditIcon />
+                                        ) : (
+                                            "Написать статью"
+                                        )}
                                     </Button>
                                 </Link>
                                 <Button
@@ -40,7 +58,7 @@ export const Header = () => {
                                     variant="contained"
                                     color="error"
                                 >
-                                    Выйти
+                                    {isMobile ? <LogoutIcon /> : "Выйти"}
                                 </Button>
                             </>
                         ) : (
