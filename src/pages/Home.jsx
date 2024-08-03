@@ -77,7 +77,7 @@ export const Home = () => {
                                             title={obj.title}
                                             imageUrl={
                                                 obj.imageUrl
-                                                    ? `http://localhost:4444${obj.imageUrl}`
+                                                    ? `https://backend-blog-gules.vercel.app/${obj.imageUrl}`
                                                     : ""
                                             }
                                             user={obj.user}
@@ -125,7 +125,7 @@ export const Home = () => {
                                             title={obj.title}
                                             imageUrl={
                                                 obj.imageUrl
-                                                    ? `http://localhost:4444${obj.imageUrl}`
+                                                    ? `https://backend-blog-gules.vercel.app/${obj.imageUrl}`
                                                     : ""
                                             }
                                             user={obj.user}

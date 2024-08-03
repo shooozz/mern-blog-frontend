@@ -18,6 +18,7 @@ export const FullPost = () => {
     const isLoading = useSelector(selectPostsStatus) === "loading";
     const [user, setUser] = useState({});
     const [comment, setComment] = useState("");
+    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         if (id) {
@@ -31,6 +32,12 @@ export const FullPost = () => {
         });
     }, []);
 
+    useEffect(() => {
+        if (post && post.comments) {
+            setComments(post.comments);
+        }
+    }, [post]);
+
     const addComment = async () => {
         try {
             const fields = {
@@ -40,14 +47,13 @@ export const FullPost = () => {
             };
             await axios.post(`/comments`, fields);
             setComment("");
-            // Instead of reloading the page, update the comments state directly
+
             const newComment = {
                 text: comment,
                 user: { fullName: user.fullName, avatarUrl: user.avatarUrl },
             };
-            if (post && post.comments) {
-                post.comments.push(newComment);
-            }
+
+            setComments((prevComments) => [...prevComments, newComment]);
         } catch (err) {
             console.log(err);
             alert("Error to create comment");
@@ -62,15 +68,15 @@ export const FullPost = () => {
         return <div>Post not found</div>;
     }
 
-    console.log(post);
-
     return (
         <>
             <Post
                 id={post._id}
                 title={post.title}
                 imageUrl={
-                    post.imageUrl ? `http://localhost:4444${post.imageUrl}` : ""
+                    post.imageUrl
+                        ? `https://backend-blog-gules.vercel.app/${post.imageUrl}`
+                        : ""
                 }
                 user={post.user}
                 createdAt={format(
@@ -78,25 +84,21 @@ export const FullPost = () => {
                     "dd MMM yyyy HH:mm:ss"
                 )}
                 viewsCount={post.viewsCount}
-                commentsCount={post.comments ? post.comments.length : 0}
+                commentsCount={comments.length}
                 tags={post.tags}
                 isFullPost
             >
                 <ReactMarkdown>{post.text}</ReactMarkdown>
             </Post>
             <CommentsBlock
-                items={
-                    post.comments
-                        ? post.comments.map((comment, index) => ({
-                              user: {
-                                  fullName: comment.user?.fullName || "Unknown",
-                                  avatarUrl: comment.user?.avatarUrl || "",
-                              },
-                              text: comment.text,
-                              key: index,
-                          }))
-                        : []
-                }
+                items={comments.map((comment, index) => ({
+                    user: {
+                        fullName: comment.user?.fullName || "Unknown",
+                        avatarUrl: comment.user?.avatarUrl || "",
+                    },
+                    text: comment.text,
+                    key: index,
+                }))}
                 isLoading={isLoading}
             >
                 <AddComment

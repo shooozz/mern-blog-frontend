@@ -68,7 +68,7 @@ export const AddPost = () => {
 
             navigate(_id);
         } catch (err) {
-            // console.log(err);
+            console.log(err);
             alert("Error to create article");
         }
     };
@@ -135,7 +135,7 @@ export const AddPost = () => {
                     </Button>
                     <img
                         className={styles.image}
-                        src={`http://localhost:4444${imageUrl}`}
+                        src={`https://backend-blog-gules.vercel.app/${imageUrl}`}
                         alt="Uploaded"
                     />
                 </>
