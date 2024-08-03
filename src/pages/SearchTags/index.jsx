@@ -2,7 +2,7 @@ import { Grid, useMediaQuery } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { Post, TagsBlock } from "../../components";
+import { CommentsBlock, Post, TagsBlock } from "../../components";
 import axios from "../../axios";
 
 import { format } from "date-fns";
@@ -21,8 +21,6 @@ export const SearchTags = () => {
     const [isLoading, setIsLoading] = React.useState(true);
     const tags = useSelector(selectTags);
     const tagsStatus = useSelector(selectTagsStatus);
-
-    console.log(tags, tagsStatus);
 
     const isTagsLoading = tagsStatus === "loading";
 
@@ -71,7 +69,7 @@ export const SearchTags = () => {
                                             "dd MMM yyyy HH:mm:ss"
                                         )}
                                         viewsCount={obj.viewsCount}
-                                        commentsCount={obj.commentsCount}
+                                        commentsCount={obj.comments.length}
                                         tags={obj.tags}
                                         isLoading={false}
                                         isEditable={
@@ -105,7 +103,7 @@ export const SearchTags = () => {
                                             "dd MMM yyyy HH:mm:ss"
                                         )}
                                         viewsCount={obj.viewsCount}
-                                        commentsCount={obj.commentsCount}
+                                        commentsCount={obj.comments.length}
                                         tags={obj.tags}
                                         isLoading={false}
                                         isEditable={
@@ -114,10 +112,6 @@ export const SearchTags = () => {
                                     />
                                 )
                         )}
-                    </Grid>
-
-                    <Grid xs={4} item>
-                        <TagsBlock items={tags} isLoading={isTagsLoading} />
                     </Grid>
                 </Grid>
             )}

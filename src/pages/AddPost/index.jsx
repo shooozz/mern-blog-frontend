@@ -68,7 +68,7 @@ export const AddPost = () => {
 
             navigate(_id);
         } catch (err) {
-            // console.log(err);
+            console.log(err);
             alert("Error to create article");
         }
     };
