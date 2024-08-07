@@ -2,7 +2,7 @@ import { Grid, useMediaQuery } from "@mui/material";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { CommentsBlock, Post, TagsBlock } from "../../components";
+import { Post, TagsBlock } from "../../components";
 import axios from "../../axios";
 
 import { format } from "date-fns";
@@ -24,6 +24,9 @@ export const SearchTags = () => {
 
     const isTagsLoading = tagsStatus === "loading";
 
+    const testTags = useSelector(selectTags);
+    console.log(testTags);
+
     React.useEffect(() => {
         axios
             .get(`/tags/${name}`)
@@ -43,78 +46,51 @@ export const SearchTags = () => {
 
     return (
         <>
-            {isMobile ? (
-                <Grid container spacing={0}>
+            <Grid container spacing={isMobile ? 0 : 4}>
+                {isMobile ? (
                     <Grid xs={12} item>
                         <TagsBlock items={tags} isLoading={isTagsLoading} />
                     </Grid>
-                    <Grid xs={12} item>
-                        {(isLoading ? [...Array(5)] : filteredPosts).map(
-                            (obj, index) =>
-                                isLoading ? (
-                                    <Post key={index} isLoading={true} />
-                                ) : (
-                                    <Post
-                                        key={obj._id}
-                                        _id={obj._id}
-                                        title={obj.title}
-                                        imageUrl={
-                                            obj.imageUrl
-                                                ? `https://backend-blog-gules.vercel.app/${obj.imageUrl}`
-                                                : ""
-                                        }
-                                        user={obj.user}
-                                        createdAt={format(
-                                            new Date(obj.createdAt),
-                                            "dd MMM yyyy HH:mm:ss"
-                                        )}
-                                        viewsCount={obj.viewsCount}
-                                        commentsCount={obj.comments.length}
-                                        tags={obj.tags}
-                                        isLoading={false}
-                                        isEditable={
-                                            userData?._id === obj.user._id
-                                        }
-                                    />
-                                )
-                        )}
-                    </Grid>
+                ) : (
+                    <></>
+                )}
+                <Grid xs={isMobile ? 12 : 8} item>
+                    {(isLoading ? [...Array(5)] : filteredPosts).map(
+                        (obj, index) =>
+                            isLoading ? (
+                                <Post key={index} isLoading={true} />
+                            ) : (
+                                <Post
+                                    key={obj._id}
+                                    _id={obj._id}
+                                    title={obj.title}
+                                    imageUrl={
+                                        obj.imageUrl
+                                            ? `http://localhost:4444${obj.imageUrl}`
+                                            : ""
+                                    }
+                                    user={obj.user}
+                                    createdAt={format(
+                                        new Date(obj.createdAt),
+                                        "dd MMM yyyy HH:mm:ss"
+                                    )}
+                                    viewsCount={obj.viewsCount}
+                                    commentsCount={obj.comments.length}
+                                    tags={obj.tags}
+                                    isLoading={false}
+                                    isEditable={userData?._id === obj.user._id}
+                                />
+                            )
+                    )}
                 </Grid>
-            ) : (
-                <Grid container spacing={4}>
-                    <Grid xs={8} item>
-                        {(isLoading ? [...Array(5)] : filteredPosts).map(
-                            (obj, index) =>
-                                isLoading ? (
-                                    <Post key={index} isLoading={true} />
-                                ) : (
-                                    <Post
-                                        key={obj._id}
-                                        _id={obj._id}
-                                        title={obj.title}
-                                        imageUrl={
-                                            obj.imageUrl
-                                                ? `https://backend-blog-gules.vercel.app/${obj.imageUrl}`
-                                                : ""
-                                        }
-                                        user={obj.user}
-                                        createdAt={format(
-                                            new Date(obj.createdAt),
-                                            "dd MMM yyyy HH:mm:ss"
-                                        )}
-                                        viewsCount={obj.viewsCount}
-                                        commentsCount={obj.comments.length}
-                                        tags={obj.tags}
-                                        isLoading={false}
-                                        isEditable={
-                                            userData?._id === obj.user._id
-                                        }
-                                    />
-                                )
-                        )}
+                {isMobile ? (
+                    <></>
+                ) : (
+                    <Grid xs={4} item>
+                        <TagsBlock items={tags} isLoading={isTagsLoading} />
                     </Grid>
-                </Grid>
-            )}
+                )}
+            </Grid>
         </>
     );
 };
