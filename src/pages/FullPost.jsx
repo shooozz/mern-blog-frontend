@@ -1,42 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Post } from "../components/Post";
-import AddComment from "../components/AddComment";
-import { CommentsBlock } from "../components/CommentsBlock";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { useAppDispatch } from "../redux/store";
-import { selectCurrentPost, selectPostsStatus } from "../redux/posts/selector";
-import { fetchPostById } from "../redux/posts/slice";
+
+import { Post, CommentsBlock, AddComment } from "../components";
+
 import axios from "../axios";
 import ReactMarkdown from "react-markdown";
-import { useSelector } from "react-redux";
 import { format } from "date-fns";
+import useUserData from "../hooks/useUserData";
+import usePost from "../hooks/usePostById";
+import useCommentsByPost from "../hooks/useCommentByPost";
 
 export const FullPost = () => {
-    const dispatch = useAppDispatch();
     const { id } = useParams();
-    const post = useSelector(selectCurrentPost);
-    const isLoading = useSelector(selectPostsStatus) === "loading";
-    const [user, setUser] = useState({});
-    const [comment, setComment] = useState("");
-    const [comments, setComments] = useState([]);
-
-    useEffect(() => {
-        if (id) {
-            dispatch(fetchPostById(id));
-        }
-    }, [dispatch, id]);
-
-    useEffect(() => {
-        axios.get("/auth/me").then((res) => {
-            setUser(res.data);
-        });
-    }, []);
-
-    useEffect(() => {
-        if (post && post.comments) {
-            setComments(post.comments);
-        }
-    }, [post]);
+    const { post, isLoading } = usePost(id);
+    const user = useUserData();
+    const [comment, setComment] = React.useState("");
+    const { comments, setComments } = useCommentsByPost(post);
 
     const addComment = async () => {
         try {
@@ -74,9 +53,7 @@ export const FullPost = () => {
                 id={post._id}
                 title={post.title}
                 imageUrl={
-                    post.imageUrl
-                        ? `https://backend-blog-gules.vercel.app/${post.imageUrl}`
-                        : ""
+                    post.imageUrl ? `http://localhost:4444${post.imageUrl}` : ""
                 }
                 user={post.user}
                 createdAt={format(

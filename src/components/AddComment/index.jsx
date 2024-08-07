@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 
-const AddComment = ({ addComment, comment, setComment, user }) => {
+export const AddComment = ({ addComment, comment, setComment, user }) => {
     const handleInputChange = React.useCallback(
         (event) => {
             setComment(event.target.value);
@@ -14,30 +14,41 @@ const AddComment = ({ addComment, comment, setComment, user }) => {
         [setComment]
     );
 
+    const avatar = React.useMemo(
+        () => <Avatar classes={{ root: styles.avatar }} src={user.avatarUrl} />,
+        [user.avatarUrl]
+    );
+
+    const textField = React.useMemo(
+        () => (
+            <TextField
+                label="Написать комментарий"
+                variant="outlined"
+                maxRows={10}
+                multiline
+                fullWidth
+                value={comment}
+                onChange={handleInputChange}
+            />
+        ),
+        [comment, handleInputChange]
+    );
+
+    const button = React.useMemo(
+        () => (
+            <Button variant="contained" onClick={addComment}>
+                Отправить
+            </Button>
+        ),
+        [addComment]
+    );
     return (
-        <>
-            <div className={styles.root}>
-                <Avatar
-                    classes={{ root: styles.avatar }}
-                    src={user.avatarUrl}
-                />
-                <div className={styles.form}>
-                    <TextField
-                        label="Написать комментарий"
-                        variant="outlined"
-                        maxRows={10}
-                        multiline
-                        fullWidth
-                        value={comment}
-                        onChange={handleInputChange}
-                    />
-                    <Button variant="contained" onClick={addComment}>
-                        Отправить
-                    </Button>
-                </div>
+        <div className={styles.root}>
+            {avatar}
+            <div className={styles.form}>
+                {textField}
+                {button}
             </div>
-        </>
+        </div>
     );
 };
-
-export default React.memo(AddComment);

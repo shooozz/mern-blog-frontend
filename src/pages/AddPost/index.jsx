@@ -135,7 +135,7 @@ export const AddPost = () => {
                     </Button>
                     <img
                         className={styles.image}
-                        src={`https://backend-blog-gules.vercel.app/${imageUrl}`}
+                        src={`http://localhost:4444${imageUrl}`}
                         alt="Uploaded"
                     />
                 </>
